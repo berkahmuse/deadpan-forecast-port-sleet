@@ -18,18 +18,31 @@ LINE = (
 
 OUT = Path("/output/entry.txt")
 
+# Gate from the competition kit: the entry must be 1-160 characters.
+MIN_CHARS = 1
+MAX_CHARS = 160
+
 
 def forecast_line() -> str:
     """Return the single forecast line, collapsed to one line."""
     text = " ".join(LINE.split())
-    if not 1 <= len(text) <= 160:
-        raise ValueError(f"forecast line is {len(text)} chars, must be 1-160")
+    if not MIN_CHARS <= len(text) <= MAX_CHARS:
+        raise ValueError(
+            f"forecast line is {len(text)} chars, "
+            f"must be {MIN_CHARS}-{MAX_CHARS}"
+        )
     return text
 
 
-def main() -> None:
+def write_entry() -> int:
+    """Write the forecast line to OUT; return the bytes written."""
+    data = (forecast_line() + "\n").encode("utf-8")
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(forecast_line() + "\n", encoding="utf-8")
+    return OUT.write_bytes(data)
+
+
+def main() -> None:
+    write_entry()
 
 
 if __name__ == "__main__":
